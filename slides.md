@@ -1,0 +1,235 @@
+---
+title: Supporting Local Groups on openstreetmap.org
+pdf: supporting_local_groups.pdf
+slideNumber: false
+controls: true
+---
+
+# Supporting Local Groups on openstreetmap.org {bg=#eee}
+
+Brian DeRocher
+
+State of the Map US 2019
+
+# MappingDC {bg=#eee}
+
+![](assets/mdc-2.png)
+
+# MappingDC {bg=#eee}
+
+![](assets/mdc-3.png)
+
+# MappingDC {bg=#eee}
+
+![](assets/mdc-1.png)
+
+# MappingDC {bg=#eee}
+
+![](assets/mdc-4.png)
+
+# Meetup {bg=#eee}
+
+* Found 400 members for MappingDC
+* Handles event notifications
+* Handles RSVPs
+* Could handle dues
+
+# Meetup Issue 1 {bg=#eee}
+
+Hundreds of users may join your Meetup.
+
+But only 2% show up for events.
+
+Many don't return.
+
+# Meetup Issue 2 {bg=#eee}
+
+Meetup's cost of $200 / year is not sustainable.
+
+<div style="font-size: 26px">
+
+| year | June | December |
+|:----:|:---:|:---:| 
+| 2019 | $99 |     |
+| 2018 | $90 | $90|
+| 2017 | $90 | $90 |
+| 2016 | $90 | $90 |
+| 2015 | $90 | $90 |
+| 2014 | $72 | $72 |
+| 2013 |     | $72 |
+
+</div>
+
+
+# Meetup Issue 3 {bg=#eee}
+
+It doesn't belong to OpenStreetMap.
+
+What will WeWork do with Meetup?
+
+Will it disappear like ~~GeoCities~~ Google Reader?
+
+
+# Meetup Issue 4 {bg=#eee}
+
+It's not OpenStreetMap specific.
+
+It does not handle coverage, quality assurance, projects.
+
+It does not discover the existing mappers.
+
+The attention of users often diverted to other groups.
+
+# Microcosm {bg=#eee}
+
+_micro_  _cosm_
+
+small world
+
+```render_a2s
+.-----------.
+|[microcosm]|
+'-----------'
+[microcosm]: {"fill": "Teal", "fillStyle": "solid"}
+```
+
+# Mircososm is based on {bg=#eee}
+
+* 2013 [_Group Sketch_](https://github.com/openstreetmap/openstreetmap-website/pull/297) PR #297 from Tom MacWright, Steve Singer, **Drew Dara-Abrams**, Richard Fairhurst, Ian Dees, Mikel Maron
+* 2017 State of the Map US [_Building OpenStreetMap US Community_](https://2017.stateofthemap.us/program/building-openstreetmap-us-community.html), Mikel Maron
+* 2018 [MicrocosmApp](https://github.com/openbrian/microcosm-aoi)
+* 2018 State of the Map US Andy Allan says, "Just use OSM".
+
+# Mircososm {bg=#eee}
+
+<i class="fas fa-code-branch"></i>
+
+# Model {bg=#eee}
+
+```{.render_dot args="-Nfontname=Raleway"}
+digraph G {
+    node [style=filled,color=white];
+    event [fontcolor="#00CC00"];
+    microcosm [fontcolor="#00CC00"];
+    links [fontcolor="#00CC00"];
+    member [fontcolor="#00CC00"];
+    attendance [fontcolor="#00CC00"];
+
+    event -> microcosm;
+    member -> user;
+    member -> microcosm;
+    attendance -> user;
+    attendance -> event;
+    links -> microcosm;
+    diary_entry -> user;
+}
+```
+Microcosm Roles: members, organizers
+
+
+
+# Feature Parity {bg=#eee}
+
+<div style="font-size: 22px">
+
+| Feature | Group Sketch | MicrocosmApp | OpenStreetMap |
+|---|---|---|---|
+| groups | yes | yes | yes |
+| group map | yes | yes | todo |
+| group membership | yes | yes | yes |
+| group changeset history | yes | yes | todo |
+| group diary entry | yes | no | yes |
+| events | no | yes | yes |
+| event attendance | no | no | yes |
+| discover editors | no | yes | todo |
+| welcome new editors | no | yes | todo |
+| projects, QA, coverage | no | no | yes |
+
+</div>
+
+
+# Microcosm To Do {bg=#eee}
+
+* Put group activity on the local map
+* Show the changes that local mappers are making
+* Add Notes that need to be resolved
+* Discover mappers from scanning changesets
+* Add a user's microcosm activity to their profile page
+* Message blast
+* Install on an OSM dev server
+
+# Microcosm To Do {bg=#eee}
+
+* Use Case: Help organize a mapathon
+* Use Case: Hold pictures of Field Papers / notes for others to work on
+* Write up remaining Cucumber scenarios
+* Continue building this feature and create a PR
+* Changeset review?
+
+# Cucumber {bg=#eee}
+
+```gherkin
+Feature: Managimg a Microcosm
+  In order to manage microcosms
+  as an organizer
+  I want to create and modify events
+```
+
+# Cucumber {bg=#eee}
+
+```gherkin
+  Background:
+    Given there is a microcosm "MappingDC", "Washington, DC, USA", "38.9", "-77.03", "38.516 * 10**7", "39.472 * 10**7", "-77.671 * 10**7", "-76.349 * 10**7"
+    And the microcosm has description "MappingDC strives to improve OSM in the DC area"
+    And the microcosm has the "Facebook" page "https://facebook.com/groups/mappingdc"
+    And the microcosm has the "Twitter" page "https://twitter.com/mappingdc"
+    And the microcosm has the "Website" page "https://mappingdc.org"
+    And I am on the microcosm "MappingDC" page
+```
+
+# Cucumber {bg=#eee}
+
+```gherkin
+  Scenario: Create an event
+    Given there is a user "abe@example.com" with name "Abe"
+    And this user is an organizer of this microcosm
+    When user "abe@example.com" logs in
+    And We are on the microcosm "MappingDC" page
+    And We click "Upcoming Events"
+    And We click "new event"
+    And We set the event to "Update DC Bike Lanes", "DC Library", "We will update the dc bike lane data in OSM."
+    And We submit the form
+    And We are on the microcosm "MappingDC" page
+    Then We should see "Update DC Bike Lanes"
+```
+
+# Demo {bg=#eee}
+
+# Integration Opportunities {bg=#eee}
+
+* HOT OSM
+* OSM US Task Manager
+* MapRoulette
+* Wiki Calendar
+* Meet Your Mappers
+* OSMCha
+* OSM Streak
+* HDYC
+* StreetComplete
+
+# Looking for the a team {bg=#eee}
+
+| | |
+| --- | --- |
+| Communications | Face |
+| Power Users | Hannibal |
+| Designers | Murdock |
+| Builders | B.A. |
+
+# Supporting Local Groups on openstreetmap.org {bg=#eee}
+
+Brian DeRocher
+
+brian@derocher.org
+
+@openbrian
